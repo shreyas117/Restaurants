@@ -7,6 +7,8 @@ import {
   NavLink,
   useNavigate,
   useLocation,
+  useSearchParams,
+  useParams,
   // useHistory,
 } from "react-router-dom";
 import {
@@ -55,10 +57,12 @@ const Home = () => {
   const [checked, setChecked] = useState(false);
   const [rating, setCheckRating] = useState(false);
   const [emptyPin, setEmptyPin] = useState("");
+  const { name } = useParams();
+
+  //console.log(name);
 
   const origPin = useRef(pin);
 
-  //useNavigate("/details");
   const handleCheckChange = () => {
     setChecked(!checked);
   };
@@ -73,17 +77,31 @@ const Home = () => {
       await setRest(val);
     };
     fun();
-    //getRest();
   }, []);
-  // const goDetails = (id) => {
-  //   navigate("/details" + id);
-  // };
+
+  const showMyOrders = async () => {
+    var url = "http://localhost:3001/showMyOrders?userName=" + name;
+
+    //   "&menu=" +
+    //   menu;
+    console.log(url);
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json; charset=UTF-8",
+      },
+    });
+
+    const j = await response.json();
+    console.log(j.result);
+  };
 
   const displayRest = (array) => {
     return array.map((item, index) => {
       return (
-        <Grid item xs={12} sm={6} md={4} lg={2}>
-          <Card key={index} sx={{ maxWidth: 345 }}>
+        <Grid key={index} item xs={12} sm={6} md={4} lg={2}>
+          <Card sx={{ maxWidth: 345 }}>
             <CardMedia
               component="img"
               height="140"
@@ -137,7 +155,12 @@ const Home = () => {
                     Menu
                   </Button> */}
               <Link
-                to={{ pathname: "/details/" + item._id }}
+                to={{
+                  pathname:
+                    name == undefined
+                      ? `/details/${item._id}`
+                      : `/details/${item._id}/${name}`,
+                }}
                 state={{ menu: item.menu }}
               >
                 Menu
@@ -161,7 +184,6 @@ const Home = () => {
           await setPin(e.target.value);
         }}
       />
-
       <Button
         onClick={async () => {
           const val = await getRest(pin);
@@ -175,6 +197,19 @@ const Home = () => {
       >
         Submit
       </Button>
+      {name == undefined ? (
+        <Typography align="center">Hello Guest</Typography>
+      ) : (
+        <Typography align="center">Welcome back {name}!</Typography>
+      )}
+      <Link
+        style={{ display: name != undefined ? "block" : "none" }}
+        to={{ pathname: `/home/showMyOrders/${name}` }}
+      >
+        My Orders
+      </Link>
+      <Button>Dsd</Button>
+      <Divider /> <Divider />
       <Grid container spacing={4}>
         <Grid item md={2}>
           {/* <Typography></Typography> */}
@@ -196,15 +231,12 @@ const Home = () => {
           />
         </Grid>
       </Grid>
-
       {rests == {} && <div>Loading...</div>}
-
       {rests != undefined &&
         rests["result"] != undefined &&
         rests["result"].length == 0 && (
           <Typography>No Hotels for Pin-code: {emptyPin}</Typography>
         )}
-
       {checked == false &&
         rating == false &&
         rests != undefined &&
@@ -215,7 +247,6 @@ const Home = () => {
             </Grid>
           </div>
         )}
-
       {checked == false &&
         rating == true &&
         rests != undefined &&
@@ -230,7 +261,6 @@ const Home = () => {
             </Grid>
           </div>
         )}
-
       {checked == true &&
         rating == false &&
         rests != undefined &&
@@ -241,7 +271,6 @@ const Home = () => {
             </Grid>
           </div>
         )}
-
       {checked == true &&
         rating == true &&
         rests != undefined &&

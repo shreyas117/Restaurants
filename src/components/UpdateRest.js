@@ -1,13 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import ListGroup from "react-bootstrap/ListGroup";
 import RestDetails from "./RestDetails.js";
-import {
-  Link,
-  NavLink,
-  useNavigate,
-  useLocation,
-  // useHistory,
-} from "react-router-dom";
+import DeleteIcon from "@material-ui/icons/Delete";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
   Button,
   TextField,
@@ -27,8 +22,11 @@ import zIndex from "@mui/material/styles/zIndex";
 const UpdateRest = () => {
   const location = useLocation();
   const details = location.state.details;
-  console.log(details);
-
+  //console.log(details);
+  const arr = [
+    { name: "jamun", price: "50" },
+    { name: "badushah", price: "100" },
+  ];
   const [name, setName] = useState("");
   const [imgURL, setImgURL] = useState("");
   const [info, setInfo] = useState("");
@@ -63,14 +61,16 @@ const UpdateRest = () => {
 
   const submitDetails = async () => {
     var url =
-      "http://localhost:3001/home/addRest?name=" +
+      "http://localhost:3001/editRest?name=" +
       name +
       "&imgURL=" +
       imgURL +
       "&info=" +
       info +
       "&pinCode=" +
-      pin;
+      pin +
+      "&id=" +
+      details._id;
     //   "&menu=" +
     //   menu;
     console.log(url);
@@ -97,6 +97,24 @@ const UpdateRest = () => {
     await setMenu([...t]);
   };
 
+  const deleteRow = async (index) => {
+    let data = [...menu];
+    const prevData = data.slice(0, index);
+    const afterData = data.slice(index + 1);
+
+    data = prevData.concat(afterData);
+    //console.log(data);
+    setMenu(data);
+  };
+
+  const checkEmptyItem = async () => {
+    for (var i = 0; i < menu.length; i++) {
+      if (menu[i].name == "") {
+        return true;
+      }
+    }
+    return false;
+  };
   return (
     <div>
       <TextField
@@ -104,6 +122,7 @@ const UpdateRest = () => {
         label="Name"
         value={name}
         variant="outlined"
+        required
         defaultValue={details.name}
         onChange={(e) => {
           setName(e.target.value);
@@ -141,47 +160,53 @@ const UpdateRest = () => {
       <Typography>Edit Menu Details</Typography>
       <form>
         <Button onClick={addMenuItem}>Add Menu Item</Button>
-        {menu[0].name == "" && console.log("Empty yes") && (
-          <div>Loading ..</div>
-        )}
-        {menu[0].name != "" &&
-          console.log(menu) &&
-          menu.map((input, index) => {
-            return (
-              <div key={index}>
-                <TextField
-                  name="name"
-                  //id="name"
-                  label="Name"
-                  value={input.name}
-                  variant="outlined"
-                  onChange={(e) => {
-                    handleFormChange(index, e);
-                    //setMenu(e.target.value);
-                  }}
-                />
-                <TextField
-                  name="price"
-                  label="Price"
-                  value={input.price}
-                  variant="outlined"
-                  onChange={(e) => {
-                    handleFormChange(index, e);
-                    //setMenu(e.target.value);
-                  }}
-                />
-              </div>
-            );
-          })}
-      </form>
+        {/* {menu[0].name == "" && <div>Loading ..</div>} */}
+        {menu.map((input, index) => {
+          return (
+            <div key={index}>
+              <TextField
+                name="name"
+                //id="name"
+                label="Name"
+                value={input.name}
+                required
+                variant="outlined"
+                onChange={(e) => {
+                  handleFormChange(index, e);
+                }}
+              />
+              <TextField
+                name="price"
+                label="Price"
+                value={input.price}
+                required
+                variant="outlined"
+                onChange={(e) => {
+                  handleFormChange(index, e);
+                  //setMenu(e.target.value);
+                }}
+              />
+              <Button
+                onClick={() => {
+                  deleteRow(index);
+                }}
+              >
+                <DeleteIcon />
+              </Button>
+            </div>
+          );
+        })}
 
-      <Button
-        onClick={() => {
-          submitDetails();
-        }}
-      >
-        Submit
-      </Button>
+        <Button
+          onClick={async () => {
+            (await checkEmptyItem())
+              ? alert("Menu Items cannot be empty!")
+              : submitDetails();
+          }}
+        >
+          Submit
+        </Button>
+      </form>
     </div>
   );
 };

@@ -51,7 +51,7 @@ const AddRest = () => {
 
   const submitDetails = async () => {
     var url =
-      "http://localhost:3001/home/addRest?name=" +
+      "http://localhost:3001/addRest?name=" +
       name +
       "&imgURL=" +
       imgURL +

@@ -11,6 +11,7 @@ import RestDetails from "./components/RestDetails";
 import AddRest from "./components/AddRest";
 import UpdateRest from "./components/UpdateRest";
 import Feedback from "./components/Feedback";
+import ShowMyOrders from "./components/ShowMyOrders";
 
 function App() {
   return (
@@ -19,10 +20,13 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/changePassword" element={<ChangePassword />} />
+        <Route path="/details/:id/:userName" element={<RestDetails />} />
         <Route path="/details/:id" element={<RestDetails />} />
         <Route path="/home/addrest" element={<AddRest />} />
         <Route path="/home/editrest" element={<UpdateRest />} />
+        <Route path="/home/showMyOrders/:userName" element={<ShowMyOrders />} />
         <Route path="/home/feedback/:id" element={<Feedback />} />
+        <Route path="/home/:name" element={<Home />} />
         <Route path="/home" element={<Home />} />
       </Routes>
     </BrowserRouter>

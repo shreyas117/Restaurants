@@ -23,6 +23,7 @@ import {
   Item,
 } from "@mui/material";
 import zIndex from "@mui/material/styles/zIndex";
+import { DoneOutline, Publish } from "@material-ui/icons";
 
 const Feedback = () => {
   const location = useLocation();
@@ -46,7 +47,7 @@ const Feedback = () => {
 
   const submitFeedback = async () => {
     const url =
-      "http://localhost:3001/submitDetails/?id=" +
+      "http://localhost:3001/submitReview/?id=" +
       id +
       "&name=" +
       name +
@@ -78,7 +79,7 @@ const Feedback = () => {
       {feed != undefined &&
         feed.map((item, index) => {
           return (
-            <div>
+            <div key={index}>
               <Card>
                 <Typography>User : {item.name}</Typography>
                 <Typography>Rating : {item.rating}</Typography>
@@ -96,6 +97,7 @@ const Feedback = () => {
               label="Enter Name"
               value={name}
               variant="outlined"
+              required
               onChange={(e) => {
                 setName(e.target.value);
               }}
@@ -104,6 +106,7 @@ const Feedback = () => {
               label="Enter Rating"
               value={rating}
               variant="outlined"
+              required
               onChange={(e) => {
                 setRating(e.target.value);
               }}
@@ -111,12 +114,16 @@ const Feedback = () => {
             <TextField
               label="Comments"
               value={comments}
+              required
               variant="outlined"
               onChange={(e) => {
                 setComments(e.target.value);
               }}
             />
-            <Button onClick={submitFeedback}>Submit Feedback</Button>
+            <Button onClick={submitFeedback}>
+              <Publish />{" "}
+              <Typography textTransform="none"> &nbsp;Submit Review</Typography>
+            </Button>
           </form>
         </div>
       )}

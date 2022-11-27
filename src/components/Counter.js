@@ -17,7 +17,21 @@ import {
 } from "@mui/material";
 
 const Counter = (props) => {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(props.quantity);
+
+  useEffect(() => {
+    const data = [...props.det];
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].name == props.name) {
+        //console.log(data[i].name);
+        data[i].quantity = count;
+        break;
+      }
+    }
+
+    //console.log(data);
+    props.setDet(data);
+  }, [count]);
 
   const incrementCount = async () => {
     await setCount((count) => count + 1);
@@ -36,7 +50,7 @@ const Counter = (props) => {
       </Button>
       {count}
       <Button onClick={incrementCount}>+</Button>
-      <Typography>Subtotal : {parseInt(count * props.price)}</Typography>
+      {/* <Typography>Subtotal : {parseInt(count * props.price)}</Typography> */}
     </div>
   );
 };

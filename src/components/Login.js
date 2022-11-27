@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, Navigate, useNavigate, json } from "react-router-dom";
 import {
   Button,
   TextField,
@@ -18,7 +18,7 @@ async function validate(userName, password) {
     password;
   console.log(url);
   const response = await fetch(url, {
-    method: "POST",
+    method: "GET",
     headers: {
       accept: "application/json",
     },
@@ -26,19 +26,15 @@ async function validate(userName, password) {
   if (!response.ok) {
     //throw new Error("Login error Dude!");
   }
-  const j = await response.json();
-  console.log(j.result);
-  if (j.result == true) {
-    alert("Login Successful!");
-  } else {
-    alert("Login Failed");
-  }
+  const res = await response.json();
+
+  return res.result;
 }
 
 const Login = () => {
   const [userName, setUser] = useState("");
   const [password, setPass] = useState("");
-
+  var navigate = useNavigate();
   return (
     <div>
       <Breadcrumbs aria-label="breadcrumb">
@@ -69,8 +65,12 @@ const Login = () => {
       />
 
       <Button
-        onClick={() => {
-          validate(userName, password);
+        onClick={async () => {
+          {
+            (await validate(userName, password))
+              ? navigate(`/home/${userName}`)
+              : alert("Login Failed");
+          }
         }}
       >
         Submit

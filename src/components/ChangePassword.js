@@ -33,7 +33,7 @@ async function change(userName, oldPassword, newPassword) {
   }
 }
 
-const changePassword = () => {
+const ChangePassword = () => {
   const [userName, setUser] = useState("");
   const [oldPassword, setOldPass] = useState("");
   const [newPassword, setNewPass] = useState("");
@@ -87,4 +87,4 @@ const changePassword = () => {
   );
 };
 
-export default changePassword;
+export default ChangePassword;
