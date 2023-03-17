@@ -83,8 +83,9 @@ const UpdateRest = () => {
       body: JSON.stringify(menu),
     });
 
-    const j = await response.json();
-    console.log(j.result);
+    const message = await response.json();
+    alert(message.result);
+    console.log(message.result);
   };
 
   const addMenuItem = async () => {
@@ -109,7 +110,7 @@ const UpdateRest = () => {
 
   const checkEmptyItem = async () => {
     for (var i = 0; i < menu.length; i++) {
-      if (menu[i].name == "") {
+      if (menu[i].name == "" || menu[i].price == "") {
         return true;
       }
     }
@@ -200,7 +201,7 @@ const UpdateRest = () => {
         <Button
           onClick={async () => {
             (await checkEmptyItem())
-              ? alert("Menu Items cannot be empty!")
+              ? alert("Menu item names/prices cannot be empty!")
               : submitDetails();
           }}
         >

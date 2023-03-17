@@ -22,13 +22,17 @@ import {
   CardMedia,
   CardActions,
   CardContent,
+  FormControl,
+  InputLabel,
   Grid,
   Checkbox,
+  MenuItem,
   Item,
 } from "@mui/material";
 //import Card from "./Card";
 import zIndex from "@mui/material/styles/zIndex";
 import { CardGroup } from "react-bootstrap";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 //var navigate = useNavigate();
 //const { state } = useLocation();
@@ -50,7 +54,26 @@ const getRest = async (pin = "") => {
   //console.log(res["result"]);
 };
 
+const getRestsByName = async (restName = "") => {
+  var url = "http://localhost:3001/getRestsByName?restNameSearch=" + restName;
+  //console.log(url);
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+    },
+  });
+  var x = await response.json();
+  //console.log(x);
+  //setRest(x);
+  return x;
+  //console.log(res["result"]);
+};
+
 const Home = () => {
+  const [age, setAge] = React.useState("");
+  const [restName, setRestName] = useState("");
+
   const [pin, setPin] = useState("");
   const [rests, setRest] = useState({});
   const [showMore, setShowMore] = useState(false);
@@ -173,8 +196,27 @@ const Home = () => {
     });
   };
 
+  const handleChange = (event) => {
+    setAge(event.target.value);
+    console.log(event.target.value);
+  };
+
   return (
     <div>
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">Search</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={age}
+          label="Search"
+          onChange={handleChange}
+        >
+          <MenuItem value={"Name"}>Name</MenuItem>
+          <MenuItem value={"Pin-code"}>Pin-code</MenuItem>
+        </Select>
+      </FormControl>
+      {/* Depending on what search type is picked, entered value should be assigned to appropriate state */}
       <TextField
         id="pin"
         label="Pin-Code"
@@ -182,6 +224,17 @@ const Home = () => {
         variant="outlined"
         onChange={async (e) => {
           await setPin(e.target.value);
+        }}
+      />
+      <TextField
+        id="restName"
+        label="Hotel Name"
+        value={restName}
+        variant="outlined"
+        onChange={async (e) => {
+          await setRestName(e.target.value);
+          const val = await getRestsByName(e.target.value);
+          await setRest(val);
         }}
       />
       <Button
