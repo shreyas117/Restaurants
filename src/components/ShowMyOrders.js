@@ -55,7 +55,9 @@ const ShowMyOrders = () => {
     const temp = orders.result;
     const t1 = temp[0];
     await setData(
-      t1.orders.sort((order1, order2) => (order1.bill > order2.bill ? -1 : 1))
+      t1.orders.sort((order1, order2) =>
+        order1.timestamp > order2.timestamp ? -1 : 1
+      )
     );
   };
 
@@ -107,12 +109,13 @@ const ShowMyOrders = () => {
 
   const handleFilterChange = (e) => {
     const fil = e.target.value;
+    console.log(1000 > 900 ? "TRUE" : "FALSE");
     setFilter(fil);
     const temp = [...data];
     if (fil == "highestPrice") {
-      temp.sort((order1, order2) => (order1.bill > order2.bill ? -1 : 1));
+      temp.sort((order1, order2) => (order1.bill - order2.bill > 0 ? -1 : 1));
     } else if (fil == "lowestPrice") {
-      temp.sort((order1, order2) => (order1.bill > order2.bill ? 1 : -1));
+      temp.sort((order1, order2) => (order1.bill - order2.bill < 0 ? -1 : 1));
     } else if (fil == "latest") {
       temp.sort((order1, order2) =>
         order1.timestamp > order2.timestamp ? -1 : 1
