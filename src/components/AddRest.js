@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import ListGroup from "react-bootstrap/ListGroup";
 import RestDetails from "./RestDetails.js";
+import * as XLSX from "xlsx/xlsx";
+
 import {
   Link,
   NavLink,
@@ -77,7 +79,6 @@ const AddRest = () => {
 
   const addMenuItem = async () => {
     const t = [...menu];
-
     t.push({ name: "", price: 0 });
 
     //setMenu([...inputFields, newfield])
@@ -85,8 +86,27 @@ const AddRest = () => {
     await setMenu([...t]);
   };
 
+  const handleInputFileChange = async (e) => {
+    //console.log(e.target.files[0]);
+    if (e.target.files) {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const data = e.target.result;
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const itemsArray = XLSX.utils.sheet_to_json(worksheet);
+
+        await setMenu(itemsArray);
+      };
+      reader.readAsArrayBuffer(e.target.files[0]);
+    }
+  };
+
   return (
     <div>
+      <Typography align="center">Enter Restaurant details</Typography>
+      <br />
       <TextField
         id="name"
         label="Name"
@@ -125,6 +145,7 @@ const AddRest = () => {
       />
       <Divider />
       <Typography>Add Menu Details</Typography>
+      <input type="file" onChange={handleInputFileChange} />
       <form>
         <Button onClick={addMenuItem}>Add Menu Item</Button>
         {menu.map((input, index) => {
@@ -159,6 +180,7 @@ const AddRest = () => {
       <Button
         onClick={() => {
           submitDetails();
+          alert("Restaurant added successfully!");
         }}
       >
         Submit

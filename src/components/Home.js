@@ -261,7 +261,15 @@ const Home = () => {
       >
         My Orders
       </Link>
-      <Button>Dsd</Button>
+      <br />
+      <Link
+        style={{ display: name == "commanderShepard" ? "block" : "none" }}
+        to={{ pathname: `/home/addRest` }}
+      >
+        Add Restaurant
+      </Link>
+      <br />
+      <br />
       <Divider /> <Divider />
       <Grid container spacing={4}>
         <Grid item md={2}>

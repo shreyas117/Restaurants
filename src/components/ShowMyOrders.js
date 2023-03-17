@@ -24,16 +24,19 @@ import {
   CardContent,
   Grid,
   Checkbox,
+  MenuItem,
   Item,
 } from "@mui/material";
 //import Card from "./Card";
 import zIndex from "@mui/material/styles/zIndex";
 import { CardGroup } from "react-bootstrap";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 const ShowMyOrders = () => {
   const { userName } = useParams();
 
   const [data, setData] = useState([]);
+  const [filter, setFilter] = useState("latest");
 
   //console.log(data);
   const fetchOrders = async () => {
@@ -51,7 +54,9 @@ const ShowMyOrders = () => {
     const orders = await response.json();
     const temp = orders.result;
     const t1 = temp[0];
-    await setData(t1.orders);
+    await setData(
+      t1.orders.sort((order1, order2) => (order1.bill > order2.bill ? -1 : 1))
+    );
   };
 
   useEffect(() => {
@@ -100,13 +105,47 @@ const ShowMyOrders = () => {
     return `${date} ${month} ${year} at ${time}:${minutes} ${flag}`;
   };
 
+  const handleFilterChange = (e) => {
+    const fil = e.target.value;
+    setFilter(fil);
+    const temp = [...data];
+    if (fil == "highestPrice") {
+      temp.sort((order1, order2) => (order1.bill > order2.bill ? -1 : 1));
+    } else if (fil == "lowestPrice") {
+      temp.sort((order1, order2) => (order1.bill > order2.bill ? 1 : -1));
+    } else if (fil == "latest") {
+      temp.sort((order1, order2) =>
+        order1.timestamp > order2.timestamp ? -1 : 1
+      );
+    } else {
+      temp.sort((order1, order2) =>
+        order1.timestamp > order2.timestamp ? 1 : -1
+      );
+    }
+    setData(temp);
+  };
+
   return (
     <div>
       <Typography align="center">
         Here are all your restaurant orders {userName}
       </Typography>
+      <Select
+        //labelId="demo-simple-select-label"
+        //id="demo-simple-select"
+        value={filter}
+        label="Search            "
+        onChange={handleFilterChange}
+      >
+        <MenuItem value={"latest"}>Latest</MenuItem>
+        <MenuItem value={"oldest"}>Oldest</MenuItem>
+        <MenuItem value={"highestPrice"}>Highest Price</MenuItem>
+        <MenuItem value={"lowestPrice"}>Lowest Price</MenuItem>
+      </Select>
       {data == [] && <div>Empty </div>}
       {/* {console.log(data)} */}
+      {/* Filter data here based on price/timestamp */}
+
       {data != [] &&
         data.map((order, index) => {
           return (
